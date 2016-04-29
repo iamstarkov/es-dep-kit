@@ -1,6 +1,6 @@
 {
   "name": "es-dep-kit",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "ECMAScript 2015+/CommonJS module dependencies helpers kit",
   "main": "index.es5.js",
   "jsnext:main": "index.js",
