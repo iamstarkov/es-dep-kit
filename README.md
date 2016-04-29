@@ -15,11 +15,42 @@
 ## Usage
 
 ```js
-import { esDepKit, esDepKitAsync } from 'es-dep-kit';
+import kit from 'es-dep-kit';
+import { esDepUnit as dep } from 'es-dep-unit';
 
-esDepKit('unicorns'); // unicorns
-esDepKitAsync('unicorns')
-  .then(result => console.log(result)); // unicorns
+// arguments are `requested`, `from` and `resolved` respectively
+// is string is relative path, it concatenated with `process.cwd()`
+const entry = dep(null, null, 'index.js');
+
+const file      = dep('./file',       'index.js', 'file.js');
+const fileExtra = dep('./file-extra', 'index.js', null);
+
+const folder      = dep('./folder',       'index.js', 'folder/index.js');
+const folderExtra = dep('./folder-extra', 'index.js', null);
+
+const pkg      = dep('pkg',       'index.js', 'node_modules/pkg/index.js');
+const pkgExtra = dep('pkg-extra', 'index.js', null);
+
+const pkgFile      = dep('./pkg-file',       'node_modules/pkg/index.js', 'node_modules/pkg/file.js'); // eslint-disable-line
+const pkgFileExtra = dep('./pkg-file-extra', 'node_modules/pkg/index.js', null);
+
+const nestedPkg      = dep('nested-pkg',       'node_modules/pkg/index.js', 'node_modules/pkg/node_modules/nested-pkg/index.js'); // eslint-disable-line
+const nestedPkgExtra = dep('nested-pkg-extra', 'node_modules/pkg/index.js', null);
+
+const nestedPkgFile      = dep('./nested-pkg-file',       'node_modules/pkg/node_modules/nested-pkg/index.js', 'node_modules/pkg/node_modules/nested-pkg/file.js'); // eslint-disable-line
+const nestedPkgFileExtra = dep('./nested-pkg-file-extra', 'node_modules/pkg/node_modules/nested-pkg/index.js', null); // eslint-disable-line
+
+kit._requested(file); //
+kit._resolved(); //
+kit._from(); //
+kit.isEntry(); //
+kit.requestedModule(); //
+kit.requestedLocalFile(); //
+kit.inNodeModules(); //
+kit.requestedFromNodeModules(); //
+kit.resolved(); //
+kit.notResolved(); //
+kit.isThirdParty(); //
 ```
 
 ## API
@@ -45,6 +76,20 @@ Type: `Boolean`
 Default: `false`
 
 Lorem ipsum.
+
+## Related
+
+* [es-deps][es-deps] — ECMAScript 2015+/CommonJS module dependencies array
+* [es-deps-from-string][es-deps-from-string] — ECMAScript 2015+/CommonJS module dependencies array from string
+* [es-deps-resolved][es-deps-resolved] — ECMAScript 2015+/CommonJS module dependencies resolved array
+* [es-dep-unit][es-dep-unit] — Constructor for ECMAScript 2015+/CommonJS dependency unit `Object { requested, from, resolved }`
+* [es-deps-deep][es-deps-deep] — ECMAScript 2015+/CommonJS module dependencies resolved in depth
+
+[es-deps]: https://github.com/iamstarkov/es-deps
+[es-deps-from-string]: https://github.com/iamstarkov/es-deps-from-string
+[es-deps-resolved]: https://github.com/iamstarkov/es-deps-resolved
+[es-dep-unit]: https://github.com/iamstarkov/es-dep-unit
+[es-deps-deep]: https://github.com/iamstarkov/es-deps-deep
 
 ## License
 
