@@ -13,8 +13,8 @@ const _isLocalFile = R.pipe(
   R.either(pathIsAbsolute, pathIsRelative)
 );
 
-// _isModule :: String -> Boolean
-const _isModule = R.pipe(
+// _isPackage :: String -> Boolean
+const _isPackage = R.pipe(
   contract('path', String),
   R.complement(_isLocalFile)
 );
@@ -22,78 +22,77 @@ const _isModule = R.pipe(
 // _requested :: Object -> String
 const _requested = R.prop('requested');
 
-// _resolved :: Object -> String
-const _resolved = R.prop('resolved');
-
 // _from :: Object -> String
 const _from = R.prop('from');
 
-// requestedModule :: Object -> Boolean
+// _resolved :: Object -> String
+const _resolved = R.prop('resolved');
+
+// isEntry :: Object -> Boolean
 const isEntry = R.unary(R.pipe(
   contract('dep', Object),
   _requested,
   R.isNil
 ));
 
-// requestedModule :: Object -> Boolean
-const requestedModule = R.unary(R.pipe(
+// isRequestedPackage :: Object -> Boolean
+const isRequestedPackage = R.unary(R.pipe(
   contract('dep', Object),
   _requested,
-  R.ifElse(isNotNil, _isModule, R.F)
+  R.ifElse(isNotNil, _isPackage, R.F)
 ));
 
-// requestedLocalFile :: Object -> Boolean
-const requestedLocalFile = R.unary(R.pipe(
+// isRequestedLocalFile :: Object -> Boolean
+const isRequestedLocalFile = R.unary(R.pipe(
   contract('dep', Object),
   _requested,
   R.ifElse(isNotNil, _isLocalFile, R.F)
 ));
 
-// inNodeModules :: Object -> Boolean
-const inNodeModules = R.unary(R.pipe(
+// isResolvedInNM :: Object -> Boolean
+const isResolvedInNM = R.unary(R.pipe(
   contract('dep', Object),
   _resolved,
   R.ifElse(isNotNil, R.test(/node_modules/), R.F)
 ));
 
-// requestedFromNodeModules :: Object -> Boolean
-const requestedFromNodeModules = R.unary(R.pipe(
+// isRequestedFromNM :: Object -> Boolean
+const isRequestedFromNM = R.unary(R.pipe(
   contract('dep', Object),
   _from,
   R.ifElse(isNotNil, R.test(/node_modules/), R.F)
 ));
 
-// resolved :: Object -> Boolean
-const resolved = R.unary(R.pipe(
+// isResolved :: Object -> Boolean
+const isResolved = R.unary(R.pipe(
   contract('dep', Object),
   _resolved,
   isNotNil
 ));
 
-// notResolved :: Object -> Boolean
-const notResolved = R.unary(R.pipe(
+// isNotResolved :: Object -> Boolean
+const isNotResolved = R.unary(R.pipe(
   contract('dep', Object),
-  _resolved,
-  R.isNil
+  R.complement(isResolved)
 ));
 
 // isThirdParty :: Object -> Boolean
 const isThirdParty = R.cond([
   [isEntry, R.F],
-  [requestedModule, requestedFromNodeModules],
-  [requestedLocalFile, R.either(requestedFromNodeModules, inNodeModules)],
+  [isRequestedPackage, isRequestedFromNM],
+  [isRequestedLocalFile, R.either(isRequestedFromNM, isResolvedInNM)],
 ]);
 
 export default {
   _requested,
-  _resolved,
   _from,
+  _resolved,
   isEntry,
-  requestedModule,
-  requestedLocalFile,
-  inNodeModules,
-  requestedFromNodeModules,
-  resolved,
-  notResolved,
+  isRequestedPackage,
+  isRequestedLocalFile,
+  isResolvedInNM,
+  isRequestedFromNM,
+  isResolved,
+  isNotResolved,
   isThirdParty,
 };

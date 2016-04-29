@@ -8,9 +8,6 @@ const entry = dep(null, null, 'index.js');
 const file      = dep('./file',       'index.js', 'file.js');
 const fileExtra = dep('./file-extra', 'index.js', null);
 
-const folder      = dep('./folder',       'index.js', 'folder/index.js');
-const folderExtra = dep('./folder-extra', 'index.js', null);
-
 const pkg      = dep('pkg',       'index.js', 'node_modules/pkg/index.js');
 const pkgExtra = dep('pkg-extra', 'index.js', null);
 
@@ -26,7 +23,6 @@ const nestedPkgFileExtra = dep('./nested-pkg-file-extra', 'node_modules/pkg/node
 const cases = [
   entry,
   file, fileExtra,
-  folder, folderExtra,
   pkg, pkgExtra,
   pkgFile, pkgFileExtra,
   nestedPkg, nestedPkgExtra,
@@ -37,7 +33,6 @@ test('isEntry', t => {
   const expected = [
     true,         // entry
     false, false, // file
-    false, false, // folder
     false, false, // pkg
     false, false, // pkgFile
     false, false, // nestedPkg
@@ -50,113 +45,106 @@ test('isEntry', t => {
 test('isEntry: empty input', t => t.throws(() => { kit.isEntry(); }, TypeError));
 test('isEntry: invalid input', t => t.throws(() => { kit.isEntry(2); }, TypeError));
 
-test('requestedModule', t => {
+test('isRequestedPackage', t => {
   const expected = [
     false,        // entry
     false, false, // file
-    false, false, // folder
     true,  true,  // pkg
     false, false, // pkgFile
     true,  true,  // nestedPkg
     false, false, // nestedPkgFile
   ];
   expected.forEach((item, i) => {
-    t.is(kit.requestedModule(cases[i]), expected[i]);
+    t.is(kit.isRequestedPackage(cases[i]), expected[i]);
   });
 });
-test('requestedModule: empty input', t => t.throws(() => { kit.requestedModule(); }, TypeError));
-test('requestedModule: invalid input', t => t.throws(() => { kit.requestedModule(2); }, TypeError));
+test('isRequestedPackage: empty input', t => t.throws(() => { kit.isRequestedPackage(); }, TypeError)); // eslint-disable-line
+test('isRequestedPackage: invalid input', t => t.throws(() => { kit.isRequestedPackage(2); }, TypeError)); // eslint-disable-line
 
-test('requestedLocalFile', t => {
+test('isRequestedLocalFile', t => {
   const expected = [
     false,        // entry
     true,  true,  // file
-    true,  true,  // folder
     false, false, // pkg
     true,  true,  // pkgFile
     false, false, // nestedPkg
     true,  true,  // nestedPkgFile
   ];
   expected.forEach((item, i) => {
-    t.is(kit.requestedLocalFile(cases[i]), expected[i]);
+    t.is(kit.isRequestedLocalFile(cases[i]), expected[i]);
   });
 });
-test('requestedLocalFile: empty input', t => t.throws(() => { kit.requestedLocalFile(); }, TypeError));
-test('requestedLocalFile: invalid input', t => t.throws(() => { kit.requestedLocalFile(2); }, TypeError));
+test('isRequestedLocalFile: empty input', t => t.throws(() => { kit.isRequestedLocalFile(); }, TypeError));  // eslint-disable-line
+test('isRequestedLocalFile: invalid input', t => t.throws(() => { kit.isRequestedLocalFile(2); }, TypeError));  // eslint-disable-line
 
-test('inNodeModules', t => {
+test('isResolvedInNM', t => {
   const expected = [
     false,        // entry
     false, false, // file
-    false, false, // folder
     true,  false, // pkg
     true,  false, // pkgFile
     true,  false, // nestedPkg
     true,  false, // nestedPkgFile
   ];
   expected.forEach((item, i) => {
-    t.is(kit.inNodeModules(cases[i]), expected[i]);
+    t.is(kit.isResolvedInNM(cases[i]), expected[i]);
   });
 });
-test('inNodeModules: empty input', t => t.throws(() => { kit.inNodeModules(); }, TypeError));
-test('inNodeModules: invalid input', t => t.throws(() => { kit.inNodeModules(2); }, TypeError));
+test('isResolvedInNM: empty input', t => t.throws(() => { kit.isResolvedInNM(); }, TypeError));
+test('isResolvedInNM: invalid input', t => t.throws(() => { kit.isResolvedInNM(2); }, TypeError));
 
-test('requestedFromNodeModules', t => {
+test('isRequestedFromNM', t => {
   const expected = [
     false,        // entry
     false, false, // file
-    false, false, // folder
     false, false, // pkg
     true,  true,  // pkgFile
     true,  true,  // nestedPkg
     true,  true,  // nestedPkgFile
   ];
   expected.forEach((item, i) => {
-    t.is(kit.requestedFromNodeModules(cases[i]), expected[i]);
+    t.is(kit.isRequestedFromNM(cases[i]), expected[i]);
   });
 });
-test('requestedFromNodeModules: empty input', t => t.throws(() => { kit.requestedFromNodeModules(); }, TypeError)); // eslint-disable-line
-test('requestedFromNodeModules: invalid input', t => t.throws(() => { kit.requestedFromNodeModules(2); }, TypeError)); // eslint-disable-line
+test('isRequestedFromNM: empty input', t => t.throws(() => { kit.isRequestedFromNM(); }, TypeError)); // eslint-disable-line
+test('isRequestedFromNM: invalid input', t => t.throws(() => { kit.isRequestedFromNM(2); }, TypeError)); // eslint-disable-line
 
-test('resolved', t => {
+test('is resolved', t => {
   const expected = [
     true,       // entry
     true, false, // file
-    true, false, // folder
     true, false, // pkg
     true, false, // pkgFile
     true, false, // nestedPkg
     true, false, // nestedPkgFile
   ];
   expected.forEach((item, i) => {
-    t.is(kit.resolved(cases[i]), expected[i]);
+    t.is(kit.isResolved(cases[i]), expected[i]);
   });
 });
-test('resolved: empty input', t => t.throws(() => { kit.resolved(); }, TypeError));
-test('resolved: invalid input', t => t.throws(() => { kit.resolved(2); }, TypeError));
+test('isResolved: empty input', t => t.throws(() => { kit.isResolved(); }, TypeError));
+test('isResolved: invalid input', t => t.throws(() => { kit.isResolved(2); }, TypeError));
 
-test('not resolved', t => {
+test('is not resolved', t => {
   const expected = [
     false,       // entry
     false, true, // file
-    false, true, // folder
     false, true, // pkg
     false, true, // pkgFile
     false, true, // nestedPkg
     false, true, // nestedPkgFile
   ];
   expected.forEach((item, i) => {
-    t.is(kit.notResolved(cases[i]), expected[i]);
+    t.is(kit.isNotResolved(cases[i]), expected[i]);
   });
 });
-test('notResolved: empty input', t => t.throws(() => { kit.notResolved(); }, TypeError));
-test('notResolved: invalid input', t => t.throws(() => { kit.notResolved(2); }, TypeError));
+test('isNotResolved: empty input', t => t.throws(() => { kit.isNotResolved(); }, TypeError));
+test('isNotResolved: invalid input', t => t.throws(() => { kit.isNotResolved(2); }, TypeError));
 
 test('isThirdParty', t => {
   const expected = [
     false,        // entry
     false, false, // file
-    false, false, // folder
     false, false, // pkg
     true,  true,  // pkgFile
     true,  true,  // nestedPkg
