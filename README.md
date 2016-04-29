@@ -16,9 +16,13 @@
 
 Every function requires one `dep` argument — `Object` described by [es-dep-unit][es-dep-unit].
 
+#### Helpers
+
 * `_requested` — returns `dep.requested`
 * `_from` — returns `dep.from`
 * `_resolved` — returns `dep.resolved`
+
+#### Methods
 
 * `isEntry` — true if `dep.requested` is `null`
 * `isRequestedPackage` — true if `dep.requested` is not a local file
