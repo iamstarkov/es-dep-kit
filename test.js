@@ -1,6 +1,6 @@
 /* eslint-disable no-multi-spaces */
 import test from 'ava';
-import { esDepUnit as dep } from 'es-dep-unit';
+import dep from 'es-dep-unit';
 import kit from './index';
 
 const entry = dep(null, null, 'index.js');
